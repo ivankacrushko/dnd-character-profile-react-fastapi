@@ -1,5 +1,16 @@
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useState } from "react";
+import { Navigate } from 'react-router-dom';
+
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return <Navigate to='/login' replace />;
+  }
+
+  return children;
+}
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -93,7 +104,7 @@ function App() {
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute> } />
         <Route path='/' element={<Login />} />
       </Routes>
     </Router>
