@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String)
 
-    character = relationship('Character', back_populates='user', uselist=False)
+    characters = relationship('Character', back_populates='user')
 
 class Character(Base):
     __tablename__ = 'characters'
@@ -37,7 +37,7 @@ class Character(Base):
     charisma = Column(Integer)
     wisdom = Column(Integer)
 
-    proficency_bonus = Column(Integer)
+    proficiency_bonus = Column(Integer)
     armor = Column(Integer)
     speed = Column(Integer)
     hp_max = Column(Integer)
@@ -50,20 +50,20 @@ class Character(Base):
 
     backstory = Column(Text)
 
-    skills = relationship('Skill', back_populates='character')
-    attacks = relationship('Attack', back_populates='character')
-    proficiencies = relationship('Proficiency', back_populates='character')
-    languages = relationship('Language', back_populates='character')
-    equipment = relationship('Equipment', back_populates='character')
-    traits = relationship('Trait', back_populates='character')
-    features = relationship('Feature', back_populates='character')
+    skills = relationship('Skill', back_populates='character', cascade='all, delete-orphan')
+    attacks = relationship('Attack', back_populates='character', cascade='all, delete-orphan')
+    proficiencies = relationship('Proficiency', back_populates='character', cascade='all, delete-orphan')
+    languages = relationship('Language', back_populates='character', cascade='all, delete-orphan')
+    equipment = relationship('Equipment', back_populates='character', cascade='all, delete-orphan')
+    traits = relationship('Trait', back_populates='character', cascade='all, delete-orphan')
+    features = relationship('Feature', back_populates='character', cascade='all, delete-orphan')
 
 class Skill(Base):
     __tablename__ = 'skills'
 
     id = Column(Integer, primary_key=True, index=True)
     character_id = Column(Integer, ForeignKey('characters.id'))
-    character = relationship('Character', back_populates='skill')
+    character = relationship('Character', back_populates='skills')
 
     acrobatics = Column(Boolean, default=False)
     animal_handling = Column(Boolean, default=False)
@@ -131,8 +131,8 @@ class Trait(Base):
     character_id = Column(Integer, ForeignKey('characters.id'))
     character = relationship('Character', back_populates='traits')
 
-    name = Column(String)
-    description = Column(Text)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
 
 class Feature(Base):
     __tablename__ = 'features'

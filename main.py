@@ -4,14 +4,18 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from database import SessionLocal, engine
+from database import SessionLocal, engine, get_db
 from models import Base, User,UserRegister, UserResponse, UserLogin
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
 from fastapi.middleware.cors import CORSMiddleware
+from auth import create_access_token, get_current_user, ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES
+
+from routes import characters
+
 import logging
 
 app = FastAPI()
+
+app.include_router(characters.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,37 +25,6 @@ app.add_middleware(
     allow_headers = ['*'],
 )
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl = 'login')
-
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({'exp': expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get('sub')
-        if email is None:
-            raise HTTPException(status_code=401, detail='You dont have access to this site')
-
-        user = db.query(User).filter(User.email == email).first()
-        if user is None:
-            raise HTTPException(status_code=401, detail='You dont have access to this site')
-        
-        return user
-    except JWTError:
-        raise HTTPException(status_code=401, detail='You dont have access to this site')
     
 Base.metadata.create_all(bind=engine)
 
@@ -79,7 +52,6 @@ async def register(user: UserRegister, db: Session = Depends(get_db)):
 
 @app.post('/login')
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    #user_data = fake_db.get(form_data.username)
     db_user = db.query(User).filter(User.email == form_data.username).first()
     if not db_user or not pwd_context.verify(form_data.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -99,9 +71,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-SECRET_KEY = 'supersecretkey'
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
 
 
 
