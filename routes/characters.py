@@ -131,7 +131,6 @@ def get_character(character_id: int, db: Session = Depends(get_db), current_user
     character_data["languages"] = languages
     character_data["equipment"] = equipment
     character_data["proficiencies"] = proficiencies
-
     # Konwersja do JSON
     return character_data
         

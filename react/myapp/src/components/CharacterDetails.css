@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
+
+.character-sheet {
+    font-family: 'Cormorant Garamond', serif;
+    max-width: 900px;
+    margin: auto;
+    background: #f5f1e7;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 8px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Nagłówek */
+.header {
+    text-align: center;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.attributes_skills {
+    display: grid;
+    
+    grid-template-columns: 1fr 2fr 2fr;
+    gap: 20px;
+}
+
+.traits-conteiner {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+/* Atrybuty */
+/* Atrybuty po lewej */
+.attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width:100%;
+}
+
+.attribute {
+    text-align: center;
+    border: 2px solid black;
+    padding: 10px;
+    border-radius: 10px;
+    background: white;
+    width: auto;
+}
+
+.attribute h2 {
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.attribute p {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.attribute span {
+    font-size: 1.5em;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Skille po prawej */
+.skills {
+    text-align: left;
+    width:100%;
+    font-size: 1.5em;
+    
+}
+
+.skills h2 {
+    text-align: center;
+}
+
+.skills table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.skills td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+/* HP */
+.hp-section {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+}
+
+/* Ekwipunek */
+.info-box {
+    margin-top: 20px;
+    
+    padding: 10px;
+    border: 2px solid black;
+    background: white;
+    border-radius: 5px;
+}

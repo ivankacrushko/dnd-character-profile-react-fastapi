@@ -89,9 +89,20 @@ class CharacterResponse(BaseModel):
     name: str
     class_name: str
     level: int
+    background: str
     race: str
+    armor: int
+    proficiency_bonus: int
+    speed: int
     hp_max: int
     hp_current: int
+    hp_temp: int
+    hit_dice: str
+    death_saves_success: int
+    death_saves_failure: int
+    backstory: str
+    alignment: str
+    experience: int
     strength: int
     dexterity: int
     constitution: int
@@ -120,6 +131,8 @@ class CharacterUpdate(BaseModel):
     hp_max: Optional[int] = None
     hp_current: Optional[int] = None
     hp_temp: Optional[int] = None
+    armor: Optional[int] = None
+
     strength: Optional[int] = None
     dexterity: Optional[int] = None
     constitution: Optional[int] = None

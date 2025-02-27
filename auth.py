@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 
 SECRET_KEY = 'supersecretkey'
 ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 300
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = 'login')
 
