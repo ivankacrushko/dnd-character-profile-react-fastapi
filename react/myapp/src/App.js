@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react
 import { useState } from "react";
 import { Navigate } from 'react-router-dom';
 import CreateCharacter from './pages/CreateCharacter';
+import CharacterList from './components/CharacterList';
+import CharacterDetails from './components/CharacterDetails';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -103,6 +105,8 @@ function Dashboard() {
   );
 }
 
+
+
 function App() {
   return (
     <Router>
@@ -111,6 +115,8 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute> } />
         <Route path='/create-character' element={<ProtectedRoute><CreateCharacter /></ProtectedRoute>} />
+        <Route path='/characters' element={<ProtectedRoute><CharacterList /></ProtectedRoute>} />
+        <Route path='/characters/:id' element={<ProtectedRoute><CharacterDetails /></ProtectedRoute>} />
         <Route path='/' element={<Login />} />
       </Routes>
     </Router>

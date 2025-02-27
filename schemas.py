@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 
 
@@ -83,5 +83,51 @@ class CharacterCreate(BaseModel):
 
     class Config:
         from_attributes = True
+
+class CharacterResponse(BaseModel):
+    id: int
+    name: str
+    class_name: str
+    level: int
+    race: str
+    hp_max: int
+    hp_current: int
+    strength: int
+    dexterity: int
+    constitution: int
+    intelligence: int
+    wisdom: int
+    charisma: int
+    skills: Dict[str, bool]
+    traits: List[TraitBase]
+    features: List[FeatureBase]
+    attacks: List[AttackBase]
+    languages: List[LanguageBase]
+    proficiencies: List[ProficiencyBase]
+    equipment: List[EquipmentBase]
+
+    class Config:
+        orm_mode = True
+
+class CharacterUpdate(BaseModel):
+    name: Optional[str] = None
+    class_name: Optional[str] = None
+    level: Optional[int] = None
+    background: Optional[str] = None
+    race: Optional[str] = None
+    alignment: Optional[str] = None
+    experience: Optional[int] = None
+    hp_max: Optional[int] = None
+    hp_current: Optional[int] = None
+    hp_temp: Optional[int] = None
+    strength: Optional[int] = None
+    dexterity: Optional[int] = None
+    constitution: Optional[int] = None
+    intelligence: Optional[int] = None
+    wisdom: Optional[int] = None
+    charisma: Optional[int] = None
+
+    class Config:
+        orm_mode = True
     
 
