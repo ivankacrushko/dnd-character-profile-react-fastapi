@@ -1,10 +1,10 @@
 import React, { useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import './CharacterDetails.css';
+import { FaPencilAlt, FaTrash, FaPlus} from 'react-icons/fa';
 
 const CharacterDetails = () => {
     const [character, setCharacter] = useState([]);
-    const [editingFields, setEditingFields] = useState({})
 
     const {id} = useParams();
     const token = localStorage.getItem('token');
@@ -39,20 +39,6 @@ const CharacterDetails = () => {
     if (!character) {
         return <p>Ładowanie danych postaci....</p>;
     }
-
-    const handleChange = (field, value) => {
-        setCharacter((prevCharacter) => ({
-            ...prevCharacter,
-            [field]: value
-        }));
-    };
-
-    const handleEdit = (field) => {
-        setEditingFields((prev) => ({
-            ...prev,
-            [field]: true
-        }));
-    };
 
     const handleSave = async (field, newValue) => {
         try {
@@ -127,6 +113,118 @@ const CharacterDetails = () => {
         );
     };
 
+    const EditableSection = ({ title, items, fieldName, onSave }) => {
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const [localItems, setLocalItems] = useState(items || []);
+    
+        const handleEdit = (index, field, value) => {
+            const updatedItems = [...localItems];
+            updatedItems[index] = { ...updatedItems[index], [field]: value };
+            setLocalItems(updatedItems);
+        };
+    
+        const handleAdd = () => {
+            setLocalItems([...localItems, { name: "", description: "", quantity: 1 }]);
+        };
+    
+        const handleDelete = (index) => {
+            handleEdit(index, 'quantity', 0);
+        };
+    
+        const handleSave = async () => {
+            await onSave(fieldName, localItems);
+            setIsModalOpen(false);
+        };
+    
+        return (
+            <div className="section">
+                <div className="section-header">
+                    <h3>{title}</h3>
+                    <FaPencilAlt className="edit-icon" onClick={() => setIsModalOpen(true)} />
+                </div>
+    
+                <ul>
+                    {localItems.map((item, index) => (
+                        <li key={index}>
+                            <strong>{item.name}</strong> - {item.description} (x{item.quantity})
+                        </li>
+                    ))}
+                </ul>
+    
+                {/* Modal */}
+                {isModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h2>Edytuj {title}</h2>
+                            {localItems.map((item, index) => (
+                                <div key={index} className="edit-item">
+                                    <input
+                                        type="text"
+                                        placeholder="Nazwa"
+                                        value={item.name}
+                                        onChange={(e) => handleEdit(index, "name", e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Opis"
+                                        value={item.description}
+                                        onChange={(e) => handleEdit(index, "description", e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Ilość"
+                                        value={item.quantity}
+                                        min="1"
+                                        onChange={(e) => handleEdit(index, "quantity", Number(e.target.value))}
+                                    />
+                                    <FaTrash className="delete-icon" onClick={() => handleDelete(index)} />
+                                </div>
+                            ))}
+                            <button onClick={handleAdd}><FaPlus /> Dodaj</button>
+                            <div className="modal-buttons">
+                                <button onClick={() => setIsModalOpen(false)}>Anuluj</button>
+                                <button onClick={handleSave}>Zapisz</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+
+    const handleSkillChange = async (skill, newValue) => {
+        setCharacter((prevCharacter) => ({
+            ...prevCharacter,
+            skills: {
+                ...prevCharacter.skills,
+                [skill]: newValue,
+            }
+        }));
+    
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/characters/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    skills: {
+                        ...character.skills,
+                        [skill]: newValue
+                    }
+                }),
+            });
+    
+            if (!response.ok) {
+                console.error("Błąd podczas zapisywania skilla");
+            }
+        } catch (error) {
+            console.error("Błąd:", error);
+        }
+    };
+
     const calculateModifier = (abilityScore) => {
         if (typeof abilityScore !== "number") return 0;  // Unikamy NaN
         return Math.floor((abilityScore - 10) / 2);
@@ -156,7 +254,20 @@ const CharacterDetails = () => {
         sleight_of_hand: character.dexterity,
         stealth: character.dexterity,
         survival: character.wisdom,
-    }
+    };
+
+    const handleDeathSaveChange = async (type, index) => {
+        let newValue = character[type];
+    
+        if (index + 1 > newValue) {
+            newValue = index + 1; // Inkrementacja
+        } else {
+            newValue = index; // Dekrementacja
+        }
+
+        handleSave(type, newValue);
+    };
+
 
     return (
         <div className="character-sheet">
@@ -249,53 +360,119 @@ const CharacterDetails = () => {
                     onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
                     onSave={(field, newValue) => handleSave(field, newValue)}
                 /></p>
+        <div className="death-saves">
+        <h3>Rzuty ocalające</h3>
+        
+        <div className="death-save-section">
+            <span>Saves:</span>
+            {[0, 1, 2].map((i) => (
+                <input
+                    key={`success-${i}`}
+                    type="checkbox"
+                    checked={character.death_saves_success > i}
+                    onChange={(e) => handleDeathSaveChange("death_saves_success", i)}
+                />
+            ))}
+        </div>
+
+        <div className="death-save-section">
+            <span>Fails:</span>
+            {[0, 1, 2].map((i) => (
+                <input
+                    key={`fail-${i}`}
+                    type="checkbox"
+                    checked={character.death_saves_failure > i}
+                    onChange={(e) => handleDeathSaveChange("death_saves_failure", i)}
+                />
+            ))}
+        </div>
+        </div>
             </div>
 
             {/* Atrybuty + skille*/}
             <div className='attributes_skills'>
                 <div className="attributes">
                     {["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"].map((attr) => (
+                        
                         <div key={attr} className="attribute">
                             <h2>{attr.toUpperCase().slice(0, 3)}</h2>
-                            <p>{character[attr]}</p>
+                            <p><EditableField
+                                field={attr}
+                                type='number'
+                                value={character[attr]}
+                                onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
+                                onSave={(field, newValue) => handleSave(field, newValue)}
+                            /></p>
                             <span>+{calculateModifier(character[attr])}</span>
                         </div>
                     ))}
                 </div>
-                
+            <div className='skills-attacks'>  
                 {/* Skille */}
                 <div className="skills">
-                    {character.skills ? (
-                        <table>
-                        <tbody>
-                        
-                            {Object.entries(character.skills).map(([skill, isProficient]) => {
-                                const abilityScore = skillModifiers[skill] ?? 10; // Domyślnie 10
-                                const abilityModifier = calculateModifier(abilityScore);
-                                const proficiencyBonus = character?.proficiency_bonus ?? 2; // Domyślnie 2
-                                const skillValue = calculateSkillValue(isProficient, abilityModifier, proficiencyBonus);
+                <h2>Umiejętności</h2>
+                        {character.skills ? (
+                            <table>
+                            <tbody>
+                            
+                                {Object.entries(character.skills).map(([skill, isProficient]) => {
+                                    const abilityScore = skillModifiers[skill] ?? 10; // Domyślnie 10
+                                    const abilityModifier = calculateModifier(abilityScore);
+                                    const proficiencyBonus = character?.proficiency_bonus ?? 2; // Domyślnie 2
+                                    const skillValue = calculateSkillValue(isProficient, abilityModifier, proficiencyBonus);
 
-                                return (
-                                    <tr key={skill}>
-                                        <td>{skill.charAt(0).toUpperCase() + skill.slice(1).replace('_', ' ')}</td>
-                                        <td>{skillValue}</td>
-                                    </tr>
-                                );
-                            })}
-                            </tbody>
+                                    return (
+                                        <tr key={skill}>
+                                            <td>{skill.charAt(0).toUpperCase() + skill.slice(1).replace('_', ' ')}</td>
+                                            <td>{skillValue}</td>
+                                            <td><input
+                                                    type="checkbox"
+                                                    checked={isProficient}
+                                                    onChange={(e) => handleSkillChange(skill, e.target.checked)}
+                                            /></td>
+                                        </tr>
+                                    );
+                                })}
+                                </tbody>
+                                </table>
+                            ) : (
+                                <tr>
+                                    <td colSpan="2">Brak danych o skillach</td>
+                                </tr>
+                            )}
+                        
+                    </div>
+                    <div className="attacks">
+                            <h2>Ataki</h2>
+                            <table>
+                            
+                            {character.attacks && character.attacks.length > 0 ? (
+                                <tbody>
+                                    <tr>
+                                            <th>Nazwa</th>
+                                            <th>Bonus</th>
+                                            <th>DMG</th>
+                                        </tr>
+                                    {character.attacks.map((attack, index) => (
+                                        <tr key={attack}>
+                                            <td>{attack.name}</td>
+                                            <td>+{attack.attack_bonus}</td>
+                                            <td>{attack.damage}</td>
+                                        </tr>
+                                    ))}
+                                
+                                </tbody>
+                            ) : (
+                                <p>Brak przedmiotów</p>
+                            )}
                             </table>
-                        ) : (
-                            <tr>
-                                <td colSpan="2">Brak danych o skillach</td>
-                            </tr>
-                        )}
-                    
-                </div>
+                        </div>
+                </div>  
 
                 <div className='traits-container'>
                 {/* Traits & features */}
+                    <h2>Cechy</h2>
                     <div className="info-box">
-                            <h2>Cechy</h2>
                             {character.traits && character.traits.length > 0 ? (
                                 <ul>
                                     {character.traits.map((trait, index) => (
@@ -321,8 +498,9 @@ const CharacterDetails = () => {
                             )}
                         </div>
                         {/* Bieglosci */}
+                        <h2>Inne biegłości</h2>
                         <div className="info-box">
-                            <h2>Inne biegłości</h2>
+                            
                             {character.proficiencies && character.proficiencies.length > 0 ? (
                                 <ul>
                                     {character.proficiencies.map((proficiency, index) => (
@@ -337,8 +515,9 @@ const CharacterDetails = () => {
                         </div>
 
                         {/* Languages */}
+                        <h2>Języki</h2>
                         <div className="info-box">
-                            <h2>Języki</h2>
+                            
                             {character.languages && character.languages.length > 0 ? (
                                 <ul>
                                     {character.languages.map((language, index) => (
@@ -352,23 +531,17 @@ const CharacterDetails = () => {
                             )}
                         </div>
                         {/* Ekwipunek */}
-                        <div className="info-box">
-                            <h2>Ekwipunek</h2>
-                            {character.equipment && character.equipment.length > 0 ? (
-                                <ul>
-                                    {character.equipment.map((item, index) => (
-                                        <li key={index}>
-                                            <strong>{item.name}</strong> - {item.description} (x{item.quantity})
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>Brak przedmiotów</p>
-                            )}
-                        </div>
+                        <EditableSection
+                title="Equipment"
+                items={character.equipment}
+                fieldName="equipment"
+                onSave={handleSave}
+            />
             </div>
             </div>
 
+            
+            
             
             
             

@@ -132,6 +132,8 @@ class CharacterUpdate(BaseModel):
     hp_current: Optional[int] = None
     hp_temp: Optional[int] = None
     armor: Optional[int] = None
+    death_saves_success: Optional[int] = None
+    death_saves_failure: Optional[int] = None
 
     strength: Optional[int] = None
     dexterity: Optional[int] = None
@@ -139,6 +141,9 @@ class CharacterUpdate(BaseModel):
     intelligence: Optional[int] = None
     wisdom: Optional[int] = None
     charisma: Optional[int] = None
+
+    skills: Optional[Dict[str, bool]] = None
+    equipment: Optional[List[EquipmentBase]] = None
 
     class Config:
         orm_mode = True

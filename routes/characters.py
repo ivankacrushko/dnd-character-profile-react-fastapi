@@ -5,6 +5,7 @@ from models import Character, Skill, Trait, Feature, Attack, Proficiency, Langua
 from schemas import CharacterCreate, CharacterResponse, CharacterUpdate
 from auth import get_current_user
 from models import User
+import logging
 
 router = APIRouter()
 
@@ -77,10 +78,52 @@ def update_character(character_id: int, update_data: CharacterUpdate, db: Sessio
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
 
-    # Aktualizujemy tylko podane pola
-    update_dict = update_data.dict(exclude_unset=True)
+    
+    update_dict = update_data.dict(exclude_unset=True)  # Konwersja na dict
+    print(update_dict)
+
+
     for key, value in update_dict.items():
-        setattr(character, key, value)
+        if key == "skills":  # Specjalne traktowanie dla skilli
+            skill_obj = db.query(Skill).filter(Skill.character_id == character_id).first()
+            if not skill_obj:
+                raise HTTPException(status_code=404, detail="Skills not found")
+
+            for skill_name, skill_value in value.items():
+                if hasattr(skill_obj, skill_name):  
+                    setattr(skill_obj, skill_name, skill_value)
+        
+        elif key == "equipment":
+
+            if not isinstance(value, list):  
+                raise HTTPException(status_code=400, detail="Equipment must be a list")
+
+            for item in value:
+                if not isinstance(item, dict):  
+                    raise HTTPException(status_code=400, detail="Invalid equipment format")
+
+
+                existing_item = db.query(Equipment).filter(
+                    Equipment.character_id == character.id,
+                    Equipment.name == item["name"]
+                ).first()
+
+                if existing_item:
+                    if item.get("quantity", 1) <= 0:  
+                        db.delete(existing_item)
+                    else:
+                        existing_item.quantity = item.get("quantity", 1)
+                else:
+                    item_instance = Equipment(
+                        name=item.get("name", "Unknown Item"),
+                        description=item.get("description", ""),
+                        quantity=item.get("quantity", 1),
+                        character_id=character.id
+                    )
+                    db.add(item_instance)  
+                    character.equipment.append(item_instance)
+        else:
+            setattr(character, key, value)
 
     db.commit()
     db.refresh(character)
