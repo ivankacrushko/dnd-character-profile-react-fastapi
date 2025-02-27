@@ -55,10 +55,10 @@ const CharacterForm = ({ onSubmit }) => {
 
     const [newTrait, setNewTrait] = useState({ name : "", description: ""});
     const [newFeature, setNewFeature] = useState({ name : "", description: ""});
-    const [newAttack, setNewAttack] = useState({ name: "", attack_bonus: "", damage: "" });
+    const [newAttack, setNewAttack] = useState({ name: "", attack_bonus: 0, damage: "" });
     const [newProficiency, setNewProficiency] = useState({ name: "", description: "" });
     const [newLanguage, setNewLanguage] = useState({ name: "", description: "" });
-    const [newEquipment, setNewEquipment] = useState({ name: "", description: "", quantity: ''});
+    const [newEquipment, setNewEquipment] = useState({ name: "", description: "", quantity: 1});
 
     const [isTraitsOpen, setIsTraitsOpen] = useState(false);
     const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
@@ -97,10 +97,10 @@ const CharacterForm = ({ onSubmit }) => {
     
         if (category === "traits") setNewTrait({ name: "", description: "" });
         if (category === "features") setNewFeature({ name: "", description: "" });
-        if (category === "attacks") setNewAttack({ name: '', attack_bonus: '', damage: '' });
+        if (category === "attacks") setNewAttack({ name: '', attack_bonus: 0, damage: '' });
         if (category === "proficiencies") setNewProficiency({ name: '', description: '' });
         if (category === "languages") setNewLanguage({ name: '', description: '' });
-        if (category === "equipment") setNewEquipment({ name: '', description: '', quantity: ''});
+        if (category === "equipment") setNewEquipment({ name: '', description: '', quantity: 1});
     };
 
     const handleRemoveItem = (category, index) => {
@@ -419,7 +419,7 @@ const CharacterForm = ({ onSubmit }) => {
             </div>
 
             <div>
-                <button onClick={() => setIsTraitsOpen(!isTraitsOpen)}>
+                <button type='button' onClick={() => setIsTraitsOpen(!isTraitsOpen)}>
                     {isTraitsOpen ? "🔽 Zamknij Traity" : "▶ Otwórz Traity"}
                 </button>
                 {isTraitsOpen && (
@@ -461,7 +461,7 @@ const CharacterForm = ({ onSubmit }) => {
             </div>
 
             <div>
-                <button onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}>
+                <button type='button' onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}>
                     {isFeaturesOpen ? "🔽 Zamknij Features" : "▶ Otwórz Features"}
                 </button>
                 {isFeaturesOpen && (
@@ -479,7 +479,7 @@ const CharacterForm = ({ onSubmit }) => {
                             value={newFeature.description}
                             onChange={(e) => handleChangeNew("features", "description", e.target.value)}
                         />
-                        <button onClick={() => handleAddItem("features", newFeature)}>Dodaj Feature</button>
+                        <button type='button' onClick={() => handleAddItem("features", newFeature)}>Dodaj Feature</button>
 
                         <table>
                             <thead>
@@ -503,7 +503,7 @@ const CharacterForm = ({ onSubmit }) => {
             </div>
 
             <div>
-                <button onClick={() => setIsAttacksOpen(!isAttacksOpen)}>
+                <button type='button' onClick={() => setIsAttacksOpen(!isAttacksOpen)}>
                     {isAttacksOpen ? "🔽 Zamknij Attacks" : "▶ Otwórz Attacks"}
                 </button>
                 {isAttacksOpen && (
@@ -516,7 +516,7 @@ const CharacterForm = ({ onSubmit }) => {
                             onChange={(e) => handleChangeNew("attacks", "name", e.target.value)}
                         />
                         <input
-                            type="text"
+                            type="number"
                             placeholder="Atak bonus"
                             value={newAttack.attack_bonus}
                             onChange={(e) => handleChangeNew("attacks", "attack_bonus", e.target.value)}
@@ -527,7 +527,7 @@ const CharacterForm = ({ onSubmit }) => {
                             value={newAttack.damage}
                             onChange={(e) => handleChangeNew("attacks", "damage", e.target.value)}
                         />
-                        <button onClick={() => handleAddItem("attacks", newAttack)}>Dodaj Feature</button>
+                        <button type='button' onClick={() => handleAddItem("attacks", newAttack)}>Dodaj Feature</button>
 
                         <table>
                             <thead>
@@ -552,7 +552,7 @@ const CharacterForm = ({ onSubmit }) => {
             </div>
 
             <div>
-                <button onClick={() => setIsProficienciesOpen(!isProficienciesOpen)}>
+                <button type='button' onClick={() => setIsProficienciesOpen(!isProficienciesOpen)}>
                     {isProficienciesOpen ? "🔽 Zamknij biegłosci" : "▶ Otwórz biegłosci"}
                 </button>
                 {isProficienciesOpen && (
@@ -571,7 +571,7 @@ const CharacterForm = ({ onSubmit }) => {
                             onChange={(e) => handleChangeNew("proficiencies", "description", e.target.value)}
                         />
 
-                        <button onClick={() => handleAddItem("proficiencies", newProficiency)}>Dodaj biegłość</button>
+                        <button type='button' onClick={() => handleAddItem("proficiencies", newProficiency)}>Dodaj biegłość</button>
 
                         <table>
                             <thead>
@@ -595,7 +595,7 @@ const CharacterForm = ({ onSubmit }) => {
             </div>
 
             <div>
-                <button onClick={() => setIsLanguagesOpen(!isLanguagesOpen)}>
+                <button type='button' onClick={() => setIsLanguagesOpen(!isLanguagesOpen)}>
                     {isLanguagesOpen ? "🔽 Zamknij jezyki" : "▶ Otwórz jezyki"}
                 </button>
                 {isLanguagesOpen && (
@@ -614,7 +614,7 @@ const CharacterForm = ({ onSubmit }) => {
                             onChange={(e) => handleChangeNew("languages", "description", e.target.value)}
                         />
 
-                        <button onClick={() => handleAddItem("languages", newLanguage)}>Dodaj biegłość</button>
+                        <button type='button' onClick={() => handleAddItem("languages", newLanguage)}>Dodaj biegłość</button>
 
                         <table>
                             <thead>
@@ -638,7 +638,7 @@ const CharacterForm = ({ onSubmit }) => {
             </div>
 
             <div>
-                <button onClick={() => setIsEquipmentOpen(!isEquipmentOpen)}>
+                <button type='button' onClick={() => setIsEquipmentOpen(!isEquipmentOpen)}>
                     {isEquipmentOpen ? "🔽 Zamknij eq" : "▶ Otwórz eq"}
                 </button>
                 {isEquipmentOpen && (
@@ -663,7 +663,7 @@ const CharacterForm = ({ onSubmit }) => {
                             onChange={(e) => handleChangeNew("equipment", "quantity", e.target.value)}
                         />
 
-                        <button onClick={() => handleAddItem("equipment", newEquipment)}>Dodaj przedmiot</button>
+                        <button type='button' onClick={() => handleAddItem("equipment", newEquipment)}>Dodaj przedmiot</button>
 
                         <table>
                             <thead>

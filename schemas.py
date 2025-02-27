@@ -31,6 +31,24 @@ class TraitBase(BaseModel):
     name: str
     description: str
 
+class AttackBase(BaseModel):
+    name: str
+    attack_bonus: int
+    damage: str
+
+class ProficiencyBase(BaseModel):
+    name: str
+    description: str
+
+class LanguageBase(BaseModel):
+    name: str
+    description: str
+
+class EquipmentBase(BaseModel):
+    name: str
+    description: str
+    quantity: int
+
 class CharacterCreate(BaseModel):
     name: str
     class_name: str
@@ -58,6 +76,10 @@ class CharacterCreate(BaseModel):
     skills: SkillBase
     traits: List[TraitBase] = []
     features: List[FeatureBase] = []
+    attacks: List[AttackBase] = []
+    proficiencies: List[ProficiencyBase] = []
+    languages: List[LanguageBase] = []
+    equipment: List[EquipmentBase] = []
 
     class Config:
         from_attributes = True

@@ -93,8 +93,7 @@ class Attack(Base):
 
     name = Column(String)
     damage = Column(String)
-    bonus = Column(Integer)
-    type = Column(String)
+    attack_bonus = Column(Integer)
 
 class Proficiency(Base):
     __tablename__ = 'proficiencies'
@@ -104,6 +103,7 @@ class Proficiency(Base):
     character = relationship('Character', back_populates='proficiencies')
 
     name = Column(String)
+    description = Column(String, nullable=True)
 
 class Language(Base):
     __tablename__ = 'languages'
@@ -113,6 +113,7 @@ class Language(Base):
     character = relationship('Character', back_populates='languages')
 
     name = Column(String)
+    description = Column(String, nullable=True)
 
 class Equipment(Base):
     __tablename__ = 'equipment'
@@ -122,6 +123,7 @@ class Equipment(Base):
     character = relationship('Character', back_populates='equipment')
 
     name = Column(String)
+    description = Column(String, nullable=True)
     quantity = Column(Integer, default = 1)
 
 class Trait(Base):
@@ -132,7 +134,7 @@ class Trait(Base):
     character = relationship('Character', back_populates='traits')
 
     name = Column(String, nullable=False)
-    description = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
 
 class Feature(Base):
     __tablename__ = 'features'
@@ -142,7 +144,7 @@ class Feature(Base):
     character = relationship('Character', back_populates='features')
 
     name = Column(String)
-    description = Column(Text)
+    description = Column(Text, nullable=True)
 
 
 class UserRegister(BaseModel):
