@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import CreateCharacter from './pages/CreateCharacter';
 import CharacterList from './components/CharacterList';
 import CharacterDetails from './components/CharacterDetails';
+import Navbar from "./components/Navbar";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -113,6 +114,7 @@ function Dashboard() {
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />

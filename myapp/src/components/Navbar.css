@@ -1,0 +1,70 @@
+/* 🌟 Główny navbar */
+.navbar {
+    background: #1e1e2e;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 📦 Kontener navbara */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* 🔗 Linki */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    vertical-align: middle;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a, .logout-btn {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover, .logout-btn:hover {
+    background: #0097e6;
+    border-radius: 5px;
+}
+
+/* 🔘 Przycisk wylogowania */
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.logout-btn:hover {
+    background: #ff4757;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+    transition: transform 0.2s ease-in-out, color 0.3s ease;
+}
+
+/* ✨ Efekt hover */
+.logo:hover {
+    color: #00a8ff;
+    transform: scale(1.1);
+}

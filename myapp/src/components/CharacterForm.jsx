@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Transition } from 'react-transition-group';
 import './CharacterForm.css';
 import { FaTrash,FaArrowLeft, FaArrowRight} from 'react-icons/fa';
@@ -164,7 +163,9 @@ const CharacterForm = ({ onSubmit }) => {
     
 
     return (
+        
         <div className="step-wrapper">
+            
         {/* 🔹 Strzałka Wstecz */}
         {step > 1 && (
                     
@@ -172,6 +173,7 @@ const CharacterForm = ({ onSubmit }) => {
                 )}
         
         <div className="character-form-container">
+        <h1>Kreator postaci</h1>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
             <div className="step-container">
                 <div className="step-indicator" style={{ transform: `translateX(-${(step - 1) * 20}%)` }}>

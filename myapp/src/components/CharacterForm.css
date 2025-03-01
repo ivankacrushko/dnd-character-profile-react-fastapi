@@ -186,10 +186,6 @@
     transition: all 0.3s ease-in-out;
 }
 
-table {
-    width: 100%;
-    text-align: center;
-}
 
 .error-message {
     color: #ff5555;
