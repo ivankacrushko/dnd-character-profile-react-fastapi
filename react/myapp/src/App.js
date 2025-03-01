@@ -101,6 +101,9 @@ function Dashboard() {
       <button onClick={() => { window.location.href = '/create-character';}} >
         Utworz postac
       </button>
+      <button onClick={() => { window.location.href = '/characters';}} >
+        Lista postaci
+      </button>
     </div>
   );
 }

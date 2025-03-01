@@ -1,0 +1,199 @@
+/* 🏆 Stylizacja kontenera */
+.step-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.character-form-container {
+    max-width: 40rem;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #1e1e2e;
+    color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: #00a8ff;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+    position: absolute;
+    top: 300px;
+    transform: translateY(-50%);
+}
+
+.nav-button.left {
+    left: 25rem;
+}
+
+.nav-button.right {
+    right: 25rem;
+}
+
+.nav-button:hover {
+    color: #0077cc;
+}
+
+/* 🔹 Pasek kroków */
+.step-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 🔹 Pasek kroków */
+.step-indicator {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+    width: 200%;  /* Musi być większe, aby zmieścić wszystkie kroki */
+}
+
+/* 🔹 Każdy krok */
+.step-indicator div {
+    flex: 0 0 19%;  /* Każdy krok zajmuje 20% szerokości */
+    text-align: left;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #7f8fa6;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* 🔹 Aktywny krok */
+.step-indicator .active {
+    color: #00a8ff;
+    border-bottom: 2px solid #00a8ff;
+}
+
+
+
+/* 📄 Formularz */
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    background: #2f3640;
+    color: #ffffff;
+    border: 1px solid #40485a;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: #00a8ff;
+    outline: none;
+}
+
+/* 🔘 Przyciski */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.button {
+    padding: 0.7rem 1.2rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button-back {
+    background: #7f8fa6;
+    color: #1e1e2e;
+}
+
+.button-next {
+    background: #00a8ff;
+    color: #ffffff;
+}
+
+.button-delete {
+    background: #ff0000;
+    color: #f1f1f1;
+}
+
+.button-save {
+    background: #4cd137;
+    color: #ffffff;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.delete-icon {
+    vertical-align: middle;
+    font-size: 25px;
+    margin-left: 10px;
+}
+
+.delete-icon:hover {
+    opacity: 0.8;
+}
+
+/* 📜 Lista przedmiotów */
+.equipment-list {
+    margin-top: 1rem;
+    padding-left: 1rem;
+}
+
+.equipment-list li {
+    margin: 0.5rem 0;
+}
+
+/* 🌀 Animacje */
+.fade-enter {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.3s ease-in-out;
+}
+
+.fade-exit {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.3s ease-in-out;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+}
+
+.error-message {
+    color: #ff5555;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}

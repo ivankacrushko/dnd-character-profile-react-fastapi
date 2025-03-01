@@ -192,7 +192,6 @@ const CharacterDetails = () => {
         );
     };
 
-
     const handleSkillChange = async (skill, newValue) => {
         setCharacter((prevCharacter) => ({
             ...prevCharacter,
@@ -532,11 +531,11 @@ const CharacterDetails = () => {
                         </div>
                         {/* Ekwipunek */}
                         <EditableSection
-                title="Equipment"
-                items={character.equipment}
-                fieldName="equipment"
-                onSave={handleSave}
-            />
+                            title="Equipment"
+                            items={character.equipment}
+                            fieldName="equipment"
+                            onSave={handleSave}
+                        />
             </div>
             </div>
 
