@@ -9,13 +9,13 @@ from models import Base, User,UserRegister, UserResponse, UserLogin, Character
 from fastapi.middleware.cors import CORSMiddleware
 from auth import create_access_token, get_current_user, ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES
 
-from routes import characters
+from routes import characters, auth
 
 import logging
-
 app = FastAPI()
 
 app.include_router(characters.router)
+app.include_router(auth.router, tags=['Authentication'])
 
 app.add_middleware(
     CORSMiddleware,

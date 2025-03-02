@@ -12,6 +12,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
+    reset_token = Column(String, nullable=True)
 
     characters = relationship('Character', back_populates='user')
 
@@ -154,6 +155,15 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    access_token: str
+    token_type: str
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+
+class NewPasswordRequest(BaseModel):
+    token: str
+    new_password: str
 
 class UserResponse(BaseModel):
     id: int

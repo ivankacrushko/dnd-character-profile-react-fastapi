@@ -9,6 +9,10 @@ from jose import JWTError, jwt
 SECRET_KEY = 'supersecretkey'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 300
+SMTP_SERVER = 'smtp.gmail.com'
+SMTP_PORT = 587
+SMTP_EMAIL = 'example@example.com'
+SMTP_PASSWORD = 'password'
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = 'login')
 
@@ -17,6 +21,18 @@ def create_access_token(data: dict):
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({'exp': expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def create_reset_token(email: str) -> str:
+    expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode = {'sub': email, 'exp': expire}
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_reset_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        return payload.get('sub')
+    except JWTError:
+        return None
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     if not token:

@@ -52,6 +52,7 @@ const CharacterList = () => {
                     </TransitionGroup>
                 </div>
             )}
+            <button className="add-button" onClick={() => navigate('/create-character')}>Stwórz postać!</button>
         </div>
     );
 };
