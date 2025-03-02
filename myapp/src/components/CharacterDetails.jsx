@@ -2,9 +2,16 @@ import React, { useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import './CharacterDetails.css';
 import { FaPencilAlt, FaTrash, FaPlus} from 'react-icons/fa';
+import NotesModal from './NotesModal';
+import DiceRoller from "../components/DiceRoller";
+
 
 const CharacterDetails = () => {
     const [character, setCharacter] = useState([]);
+
+    const [isNotesOpen, setIsNotesOpen] = useState(false);
+    const [notes, setNotes] = useState(character.notes || '');
+    const [isDiceRollerOpen, setIsDiceRollerOpen] = useState(false);
 
     const {id} = useParams();
     const token = localStorage.getItem('token');
@@ -267,9 +274,26 @@ const CharacterDetails = () => {
         handleSave(type, newValue);
     };
 
+    const saveNotes = (newNotes) => {
+        setIsNotesOpen(newNotes);
+    }
+
+
+
 
     return (
         <div className="character-sheet">
+            {/* Floating Button */}
+            <button className="floating-button" onClick={() => setIsNotesOpen(true)}>📝</button>
+            
+            {/* Modale */}
+            <NotesModal 
+                isOpen={isNotesOpen} 
+                onClose={() => setIsNotesOpen(false)} 
+                onSave={saveNotes} 
+                initialNotes={notes}
+            />
+            <DiceRoller />
             {/* Nagłówek */}
             <div className="header">
                 <h1>
