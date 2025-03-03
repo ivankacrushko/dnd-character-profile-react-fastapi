@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import './CharacterDetails.css';
 import { FaPencilAlt, FaTrash, FaPlus} from 'react-icons/fa';
 import NotesModal from './NotesModal';
-import DiceRoller from "../components/DiceRoller";
+import DiceRoller from "./DiceRoller";
 
 
 const CharacterDetails = () => {
@@ -285,6 +285,7 @@ const CharacterDetails = () => {
         <div className="character-sheet">
             {/* Floating Button */}
             <button className="floating-button" onClick={() => setIsNotesOpen(true)}>📝</button>
+            <button className="dice-floating-button" onClick={() => setIsDiceRollerOpen(true)}>DICE</button>
             
             {/* Modale */}
             <NotesModal 
@@ -293,7 +294,11 @@ const CharacterDetails = () => {
                 onSave={saveNotes} 
                 initialNotes={notes}
             />
-            <DiceRoller />
+            <DiceRoller 
+                isOpen={isDiceRollerOpen} 
+                onClose={() => setIsDiceRollerOpen(false)} 
+            />
+            
             {/* Nagłówek */}
             <div className="header">
                 <h1>
