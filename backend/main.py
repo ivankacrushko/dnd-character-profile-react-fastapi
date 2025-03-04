@@ -27,7 +27,6 @@ app.add_middleware(
 
     
 Base.metadata.create_all(bind=engine)
-
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
@@ -85,11 +84,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 	logging.error(f"{request}: {exc_str}")
 	content = {'status_code': 10422, 'message': exc_str, 'data': None}
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-
-
-
-
 
 if __name__ == "__main__":
     import uvicorn

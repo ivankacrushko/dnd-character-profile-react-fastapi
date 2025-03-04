@@ -2,13 +2,14 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react
 import { useState } from "react";
 import { Navigate } from 'react-router-dom';
 import CreateCharacter from './pages/CreateCharacter';
-import CharacterList from './components/CharacterList';
-import CharacterDetails from './components/CharacterDetails';
+import CharacterList from './pages/CharacterList';
+import CharacterDetails from './pages/CharacterDetails';
 import Navbar from "./components/Navbar";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import ResetPasswordRequest from "./components/ResetPasswordRequest";
-import ResetPasswordConfirm from "./components/ResetPasswordConfirm";
+import Footer from "./components/Footer";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ResetPasswordRequest from "./pages/ResetPasswordRequest";
+import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -59,6 +60,7 @@ function App() {
         <Route path='/characters/:id' element={<ProtectedRoute><CharacterDetails /></ProtectedRoute>} />
         <Route path='/' element={<Login />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

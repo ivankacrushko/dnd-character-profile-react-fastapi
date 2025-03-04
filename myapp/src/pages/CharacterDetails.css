@@ -13,10 +13,17 @@
 
 /* Nagłówek */
 .header {
+    font-size: 1.4rem;
     text-align: center;
     border-bottom: 2px solid black;
     padding-bottom: 10px;
     margin-bottom: 20px;
+}
+
+.hp-section-col {
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .attributes-skills {

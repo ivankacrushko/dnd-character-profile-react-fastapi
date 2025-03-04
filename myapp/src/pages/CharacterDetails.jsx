@@ -2,8 +2,9 @@ import React, { useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import './CharacterDetails.css';
 import { FaPencilAlt, FaTrash, FaPlus} from 'react-icons/fa';
-import NotesModal from './NotesModal';
-import DiceRoller from "./DiceRoller";
+import NotesModal from '../components/NotesModal';
+import DiceRoller from "../components/DiceRoller";
+import EditableSection from "../components/EditableSection";
 import { toast } from "react-toastify";
 
 
@@ -122,195 +123,6 @@ const CharacterDetails = () => {
             >
                 {value || "Kliknij, aby edytować"}
             </span>
-        );
-    };
-
-    const EditableSection = ({ title, fieldName, items = [], onSave }) => {
-        const [isModalOpen, setIsModalOpen] = useState(false);
-        const [localItems, setLocalItems] = useState(items || []);
-    
-        const isEquipmentField = fieldName === "equipment";
-        const isAttackSection = fieldName === "attacks";
-    
-        // Aktualizuje wartość konkretnego pola
-        const handleEdit = (index, field, value) => {
-            const updatedItems = [...localItems];
-            updatedItems[index] = { ...updatedItems[index], [field]: value };
-            setLocalItems(updatedItems);
-        };
-    
-        // Dodaje nowy pusty element
-        const handleAdd = () => {
-            if (isEquipmentField) {
-                setLocalItems([...localItems, { name: "", description: "", quantity: 1 }]);
-            } else if (isAttackSection) {
-                setLocalItems([...localItems, { name: "", attackBonus: 0, damage: "" }]);
-            } else {
-                setLocalItems([...localItems, { name: "", description: "" }]);
-            }
-        };
-    
-        // Usuwa element (ustawia ilość na 0 w przypadku ekwipunku)
-        
-        
-    
-        // Zapisuje zmiany
-        const handleSave = async () => {
-            
-
-            await onSave(fieldName, localItems);
-            setIsModalOpen(false);
-        };
-
-        const handleDelete = async (itemId, index) => {
-            try {
-                const url = `http://127.0.0.1:8000/characters/${character.id}/${fieldName}/${itemId}`;
-                
-        
-                const response = await fetch(url, { method: "DELETE" });
-        
-                if (!response.ok) {
-                    toast.error('Najpierw zapisz');
-                    const errorText = await response.text();
-                    throw new Error(`Failed to delete item: ${errorText}`);
-                }
-        
-                
-                setLocalItems(localItems.filter((_, i) => i !== index));
-            } catch (error) {
-                console.error("Error deleting item:", error);
-            }
-        };
-    
-        return (
-            <>
-            
-                
-                {isAttackSection ? (
-                    <div className='attacks-box'>
-                        <div className="section-header">
-                            <h2>{title}</h2>
-                            <FaPencilAlt className="edit-icon" onClick={() => setIsModalOpen(true)} />
-                        </div>
-                        
-                            
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Nazwa</th>
-                                <th>Attack Bonus</th>
-                                <th>Obrażenia</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {localItems.map((item, index) => (
-                                <tr key={index}>
-                                <td>
-                                    {item.name}
-                                </td>
-                                <td>
-                                    {item.attack_bonus}
-                                </td>
-                                <td>
-                                    {item.damage}
-                                </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                ) : (
-                    <div className="info-box">
-                        <div className="section-header">
-                            <h3>{title}</h3>
-                            <FaPencilAlt className="edit-icon" onClick={() => setIsModalOpen(true)} />
-                        </div>
-                        <>
-                        {localItems.length > 0 ? (
-                            <ul>
-                                {localItems.map((item, index) => (
-                                    <li key={index}>
-                                        <strong>{item.name}</strong> - {item.description}
-                                        {!isAttackSection && ` - ${item.description}`}
-                                        {isEquipmentField && ` (x${item.quantity})`}
-                                        {isAttackSection && ` (Bonus: +${item.attack_bonus}, Damage: ${item.damage})`}
-                                    </li>
-                                ))}
-                            </ul>
-                            ) : (
-                            <p>Brak danych</p>
-                        )}
-                        </>
-                        </div>
-                    )}
-    
-                {/* Modal edycji */}
-                {isModalOpen && (
-                    <div className="modal-overlay">
-                        <div className="modal">
-                            <h2>Edytuj {title}</h2>
-    
-                            {localItems.map((item, index) => (
-                                
-                                <div key={index} className="edit-item">
-                                    <input
-                                        type="text"
-                                        placeholder="Nazwa"
-                                        value={item.name}
-                                        onChange={(e) => handleEdit(index, "name", e.target.value)}
-                                    />
-                                    {!isAttackSection && (
-                                    <input
-                                        type="text"
-                                        placeholder="Opis"
-                                        value={item.description}
-                                        onChange={(e) => handleEdit(index, "description", e.target.value)}
-                                    />
-                                    )}
-    
-                                    {isEquipmentField && (
-                                        <input
-                                            type="number"
-                                            placeholder="Ilość"
-                                            value={item.quantity}
-                                            min="1"
-                                            onChange={(e) => handleEdit(index, "quantity", Number(e.target.value))}
-                                        />
-                                    )}
-    
-                                    {isAttackSection && (
-                                        <>
-                                            <input
-                                                type="number"
-                                                placeholder="Attack Bonus"
-                                                value={item.attack_bonus}
-                                                onChange={(e) => handleEdit(index, "attack_bonus", Number(e.target.value))}
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Damage (np. 1d8+2)"
-                                                value={item.damage}
-                                                onChange={(e) => handleEdit(index, "damage", e.target.value)}
-                                            />
-                                            
-                                        </>
-                                    )}
-                                    
-                                    <FaTrash className="delete-icon" onClick={() => handleDelete(item.id, index)} />
-                                </div>
-                            ))}
-    
-                            <button onClick={handleAdd}><FaPlus /> Dodaj</button>
-    
-                            <div className="modal-buttons">
-                                <button onClick={() => setIsModalOpen(false)}>Anuluj</button>
-                                <button onClick={handleSave}>Zapisz</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            
-            </>
         );
     };
 
@@ -456,37 +268,39 @@ const CharacterDetails = () => {
 
             {/* HP & Inspiracja */}
             <div className="hp-section">
-                <p><strong>HP:</strong> 
-                <EditableField
-                    field="hp_current"
-                    type='number'
-                    value={character.hp_current}
-                    onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
-                    onSave={(field, newValue) => handleSave(field, newValue)}
-                />(+
-                <EditableField
-                    field="hp_temp"
-                    type='number'
-                    value={character.hp_temp}
-                    onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
-                    onSave={(field, newValue) => handleSave(field, newValue)}
-                />) / 
-                <EditableField
-                    field="hp_max"
-                    type='number'
-                    value={character.hp_max}
-                    onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
-                    onSave={(field, newValue) => handleSave(field, newValue)}
-                /></p>
-                <p><strong>AC:</strong> 
-                <EditableField
-                    field="armor"
-                    type='number'
-                    value={character.armor}
-                    onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
-                    onSave={(field, newValue) => handleSave(field, newValue)}
-                /></p>
-
+                <div className='hp-section-col'>
+                    <p><strong>HP:</strong> 
+                    <EditableField
+                        field="hp_current"
+                        type='number'
+                        value={character.hp_current}
+                        onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
+                        onSave={(field, newValue) => handleSave(field, newValue)}
+                    />(+
+                    <EditableField
+                        field="hp_temp"
+                        type='number'
+                        value={character.hp_temp}
+                        onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
+                        onSave={(field, newValue) => handleSave(field, newValue)}
+                    />) / 
+                    <EditableField
+                        field="hp_max"
+                        type='number'
+                        value={character.hp_max}
+                        onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
+                        onSave={(field, newValue) => handleSave(field, newValue)}
+                    /></p>
+                    <p><strong>AC:</strong> 
+                    <EditableField
+                        field="armor"
+                        type='number'
+                        value={character.armor}
+                        onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
+                        onSave={(field, newValue) => handleSave(field, newValue)}
+                    /></p>
+                </div>
+                <div className='hp-section-col'>
                 <p><strong>Speed:</strong> 
                 <EditableField
                     field="speed"
@@ -503,6 +317,7 @@ const CharacterDetails = () => {
                     onChange={(field, newValue) => setCharacter(prev => ({ ...prev, [field]: newValue }))}
                     onSave={(field, newValue) => handleSave(field, newValue)}
                 /></p>
+                </div>
         <div className="death-saves">
         <h3>Rzuty ocalające</h3>
         
@@ -585,64 +400,73 @@ const CharacterDetails = () => {
                             )}
                         
                     </div>
-                    <EditableSection
+                    { character.id && (
+                        <>
+                        <EditableSection
                             title="Attacks"
                             items={character.attacks}
                             fieldName="attacks"
                             onSave={handleSave}
+                            characterId={character.id}
                         />
+                        </>
+                    )}
+                    
+                    
                 </div>  
 
                 <div className='traits-container'>
-                {/* Traits & features */}
-                        {/* Traits */}
+                    
+                    { character.id && (
+                        <>
                         <EditableSection
-                            title="Traits"
-                            items={character.traits}
-                            fieldName="traits"
-                            onSave={handleSave}
-                        />
+                        title="Traits"
+                        items={character.traits}
+                        fieldName="traits"
+                        onSave={handleSave}
+                        characterId={character.id}
+                    />
+                    
+                    <EditableSection
+                        title="Features"
+                        items={character.features}
+                        fieldName="features"
+                        onSave={handleSave}
+                        characterId={character.id}
+                    />
+                    <>
+                    { console.log('Postac:',character) }
+                    </>
+                    
+                    <EditableSection
+                        title="Proficiencies"
+                        items={character.proficiencies}
+                        fieldName="proficiencies"
+                        onSave={handleSave}
+                        characterId={character.id}
+                    />
 
-                        {/* Features */}
-                        <EditableSection
-                            title="Features"
-                            items={character.features}
-                            fieldName="features"
-                            onSave={handleSave}
-                        />
-
-                        {/* Proficiencies */}
-                        <EditableSection
-                            title="Proficiencies"
-                            items={character.proficiencies}
-                            fieldName="proficiencies"
-                            onSave={handleSave}
-                        />
-
-
-                        {/* Languages */}
-                        <EditableSection
-                            title="Languages"
-                            items={character.languages}
-                            fieldName="languages"
-                            onSave={handleSave}
-                        />
+                    <EditableSection
+                        title="Languages"
+                        items={character.languages}
+                        fieldName="languages"
+                        onSave={handleSave}
+                        characterId={character.id}
+                    />
+                    
+                    <EditableSection
+                        title="Equipment"
+                        items={character.equipment}
+                        fieldName="equipment"
+                        onSave={handleSave}
+                        characterId={character.id}
+                    />
+                    </>
+                    )}
+                    
                         
-                        {/* Ekwipunek */}
-                        <EditableSection
-                            title="Equipment"
-                            items={character.equipment}
-                            fieldName="equipment"
-                            onSave={handleSave}
-                        />
+                </div>
             </div>
-            </div>
-
-            
-            
-            
-            
-            
         </div>
         
     )
