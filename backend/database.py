@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-#DATABASE_URL = 'postgresql://myuser:mypassword@dnd-character-profile-react-fastapi-db-1:5432/dnd-character-view'
-DATABASE_URL = 'postgresql://postgres:latitude410@localhost:5432/dnd-character-view'
+
+DATABASE_URL = os.getenv('DATABASE_URL_1')
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
