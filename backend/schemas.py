@@ -49,6 +49,8 @@ class EquipmentBase(BaseModel):
     description: str
     quantity: int
 
+
+
 class CharacterCreate(BaseModel):
     name: str
     class_name: str
@@ -84,6 +86,39 @@ class CharacterCreate(BaseModel):
     class Config:
         from_attributes = True
 
+
+class FeatureBaseResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+
+class TraitBaseResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+
+class AttackBaseResponse(BaseModel):
+    id: int
+    name: str
+    attack_bonus: int
+    damage: str
+
+class ProficiencyBaseResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+
+class LanguageBaseResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+
+class EquipmentBaseResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+    quantity: int
+
 class CharacterResponse(BaseModel):
     id: int
     name: str
@@ -110,12 +145,12 @@ class CharacterResponse(BaseModel):
     wisdom: int
     charisma: int
     skills: Dict[str, bool]
-    traits: List[TraitBase]
-    features: List[FeatureBase]
-    attacks: List[AttackBase]
-    languages: List[LanguageBase]
-    proficiencies: List[ProficiencyBase]
-    equipment: List[EquipmentBase]
+    traits: List[TraitBaseResponse]
+    features: List[FeatureBaseResponse]
+    attacks: List[AttackBaseResponse]
+    languages: List[LanguageBaseResponse]
+    proficiencies: List[ProficiencyBaseResponse]
+    equipment: List[EquipmentBaseResponse]
 
     class Config:
         orm_mode = True
@@ -144,6 +179,11 @@ class CharacterUpdate(BaseModel):
 
     skills: Optional[Dict[str, bool]] = None
     equipment: Optional[List[EquipmentBase]] = None
+    languages: Optional[List[LanguageBase]] = None
+    attacks: Optional[List[AttackBase]] = None
+    traits: Optional[List[TraitBase]] = None
+    features: Optional[List[FeatureBase]] = None
+    proficiencies: Optional[List[ProficiencyBase]] = None
 
     class Config:
         orm_mode = True

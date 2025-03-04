@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from models import Character, Skill, Trait, Feature, Attack, Proficiency, Language, Equipment
+from models import Character, Skill, Trait, Feature, Attack, Proficiency, Language, Equipment, Trait
 from schemas import CharacterCreate, CharacterResponse, CharacterUpdate
 from auth import get_current_user
 from models import User
@@ -120,8 +120,109 @@ def update_character(character_id: int, update_data: CharacterUpdate, db: Sessio
                         quantity=item.get("quantity", 1),
                         character_id=character.id
                     )
+                    print(item_instance)
                     db.add(item_instance)  
                     character.equipment.append(item_instance)
+        elif key == "attacks":
+
+            if not isinstance(value, list):  
+                raise HTTPException(status_code=400, detail="Attacks must be a list")
+
+            for attack in value:
+                if not isinstance(attack, dict):  
+                    raise HTTPException(status_code=400, detail="Invalid equipment format")
+
+
+                existing_attack = db.query(Attack).filter(
+                    Attack.character_id == character.id,
+                    Attack.name == attack["name"]
+                ).first()
+
+                if existing_attack:
+                    pass
+                else:
+                    attack_instance = Attack(
+                        name=attack.get("name", "Unknown Item"),
+                        attack_bonus=attack.get("attack_bonus", 1),
+                        damage=attack.get("damage", ''),
+                        character_id=character.id
+                    )
+                    print(attack_instance)
+                    db.add(attack_instance)  
+                    character.attacks.append(attack_instance)
+
+        elif key == "languages":
+            if not isinstance(value, list):
+                raise HTTPException(status_code=400, detail="Languages must be a list")
+
+            character.languages = []  # Wyczyść aktualne języki, jeśli trzeba
+
+            for lang in value:
+                if not isinstance(lang, dict):
+                    raise HTTPException(status_code=400, detail="Invalid language format")
+
+                language_instance = Language(
+                    name=lang.get("name", "Unknown"),
+                    description=lang.get("description", ""),
+                    character_id=character.id
+                )
+
+                db.add(language_instance)
+                character.languages.append(language_instance)
+        elif key == "features":
+            if not isinstance(value, list):
+                raise HTTPException(status_code=400, detail="Features must be a list")
+
+            character.features = []  # Wyczyść aktualne języki, jeśli trzeba
+
+            for feat in value:
+                if not isinstance(feat, dict):
+                    raise HTTPException(status_code=400, detail="Invalid language format")
+
+                feature_instance = Feature(
+                    name=feat.get("name", "Unknown"),
+                    description=feat.get("description", ""),
+                    character_id=character.id
+                )
+
+                db.add(feature_instance)
+                character.features.append(feature_instance)
+        elif key == "traits":
+            if not isinstance(value, list):
+                raise HTTPException(status_code=400, detail="Traits must be a list")
+
+            character.traits = []  # Wyczyść aktualne języki, jeśli trzeba
+
+            for trait in value:
+                if not isinstance(trait, dict):
+                    raise HTTPException(status_code=400, detail="Invalid language format")
+
+                trait_instance = Trait(
+                    name=trait.get("name", "Unknown"),
+                    description=trait.get("description", ""),
+                    character_id=character.id
+                )
+
+                db.add(trait_instance)
+                character.traits.append(trait_instance)
+        elif key == "proficiencies":
+            if not isinstance(value, list):
+                raise HTTPException(status_code=400, detail="Proficiencies must be a list")
+
+            character.proficiencies = []  # Wyczyść aktualne języki, jeśli trzeba
+
+            for prof in value:
+                if not isinstance(prof, dict):
+                    raise HTTPException(status_code=400, detail="Invalid proficiency format")
+
+                prof_instance = Proficiency(
+                    name=prof.get("name", "Unknown"),
+                    description=prof.get("description", ""),
+                    character_id=character.id
+                )
+
+                db.add(prof_instance)
+                character.proficiencies.append(prof_instance)
         else:
             setattr(character, key, value)
 
@@ -129,6 +230,33 @@ def update_character(character_id: int, update_data: CharacterUpdate, db: Sessio
     db.refresh(character)
 
     return {"message": "Character updated successfully", "character": character}
+
+@router.delete("/characters/{character_id}/{category}/{item_id}")
+def delete_item(character_id: int, category: str, item_id: int, db: Session = Depends(get_db)):
+    model_map = {
+        "attacks": Attack,
+        "equipment": Equipment,
+        'features': Feature,
+        'traits': Trait,
+        'proficiencies': Proficiency,
+        'languages' : Language
+    }
+
+    if category not in model_map:
+        raise HTTPException(status_code=400, detail="Invalid category")
+
+    model = model_map[category]
+
+    item = db.query(model).filter(model.id == item_id, model.character_id == character_id).first()
+
+    if not item:
+        raise HTTPException(status_code=404, detail=f"{category[:-1].capitalize()} not found")
+
+    db.delete(item)
+    db.commit()
+
+    return {"message": f"{category[:-1].capitalize()} deleted successfully"}
+
 
 @router.get("/characters/{character_id}", response_model=CharacterResponse)
 def get_character(character_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
@@ -138,12 +266,12 @@ def get_character(character_id: int, db: Session = Depends(get_db), current_user
         raise HTTPException(status_code=404, detail="Character not found")
 
     skills = character.skills[0] if character.skills else None
-    traits = [{"name": t.name, "description": t.description} for t in character.traits] if character.traits else []
-    features = [{"name": f.name, "description": f.description} for f in character.features] if character.features else []
-    attacks = [{"name": a.name,'attack_bonus': a.attack_bonus, "damage": a.damage} for a in character.attacks] if character.attacks else []
-    languages = [{"name": l.name,'description': l.description} for l in character.languages] if character.languages else []
-    proficiencies = [{"name": p.name,'description': p.description} for p in character.proficiencies] if character.proficiencies else []
-    equipment = [{"name": e.name,'description': e.description, 'quantity': e.quantity} for e in character.equipment] if character.equipment else []
+    traits = [{"id" : t.id, "name": t.name, "description": t.description} for t in character.traits] if character.traits else []
+    features = [{"id" : f.id, "name": f.name, "description": f.description} for f in character.features] if character.features else []
+    attacks = [{"id" : a.id, "name": a.name,'attack_bonus': a.attack_bonus, "damage": a.damage} for a in character.attacks] if character.attacks else []
+    languages = [{"id" : l.id, "name": l.name,'description': l.description} for l in character.languages] if character.languages else []
+    proficiencies = [{"id" : p.id, "name": p.name,'description': p.description} for p in character.proficiencies] if character.proficiencies else []
+    equipment = [{"id" : e.id, "name": e.name,'description': e.description, 'quantity': e.quantity} for e in character.equipment] if character.equipment else []
 
     skills_data = {
         "acrobatics": skills.acrobatics if skills else False,

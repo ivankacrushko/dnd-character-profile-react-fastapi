@@ -4,6 +4,7 @@ import './CharacterDetails.css';
 import { FaPencilAlt, FaTrash, FaPlus} from 'react-icons/fa';
 import NotesModal from './NotesModal';
 import DiceRoller from "./DiceRoller";
+import { toast } from "react-toastify";
 
 
 const CharacterDetails = () => {
@@ -28,9 +29,7 @@ const CharacterDetails = () => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data)
                     setCharacter(data)
-                    console.log(character.alignment)
                     
                 } else {
                     console.error('Error with loading character')
@@ -49,6 +48,7 @@ const CharacterDetails = () => {
 
     const handleSave = async (field, newValue) => {
         try {
+            const bodyData = JSON.stringify({ [field]: newValue });
             
             const response = await fetch(`http://127.0.0.1:8000/characters/${id}`, {
                 method: 'PUT',
@@ -68,7 +68,12 @@ const CharacterDetails = () => {
         }catch (error) {
             console.error("BLAD:", error);
         }
-    }
+    };
+
+    
+
+    
+    
 
     const EditableField = ({ field, value, type = 'text', onChange, onSave }) => {
         const [isEditing, setIsEditing] = useState(false);
@@ -120,50 +125,133 @@ const CharacterDetails = () => {
         );
     };
 
-    const EditableSection = ({ title, items, fieldName, onSave }) => {
+    const EditableSection = ({ title, fieldName, items = [], onSave }) => {
         const [isModalOpen, setIsModalOpen] = useState(false);
         const [localItems, setLocalItems] = useState(items || []);
     
+        const isEquipmentField = fieldName === "equipment";
+        const isAttackSection = fieldName === "attacks";
+    
+        // Aktualizuje wartość konkretnego pola
         const handleEdit = (index, field, value) => {
             const updatedItems = [...localItems];
             updatedItems[index] = { ...updatedItems[index], [field]: value };
             setLocalItems(updatedItems);
         };
     
+        // Dodaje nowy pusty element
         const handleAdd = () => {
-            setLocalItems([...localItems, { name: "", description: "", quantity: 1 }]);
+            if (isEquipmentField) {
+                setLocalItems([...localItems, { name: "", description: "", quantity: 1 }]);
+            } else if (isAttackSection) {
+                setLocalItems([...localItems, { name: "", attackBonus: 0, damage: "" }]);
+            } else {
+                setLocalItems([...localItems, { name: "", description: "" }]);
+            }
         };
     
-        const handleDelete = (index) => {
-            handleEdit(index, 'quantity', 0);
-        };
+        // Usuwa element (ustawia ilość na 0 w przypadku ekwipunku)
+        
+        
     
+        // Zapisuje zmiany
         const handleSave = async () => {
+            
+
             await onSave(fieldName, localItems);
             setIsModalOpen(false);
         };
+
+        const handleDelete = async (itemId, index) => {
+            try {
+                const url = `http://127.0.0.1:8000/characters/${character.id}/${fieldName}/${itemId}`;
+                
+        
+                const response = await fetch(url, { method: "DELETE" });
+        
+                if (!response.ok) {
+                    toast.error('Najpierw zapisz');
+                    const errorText = await response.text();
+                    throw new Error(`Failed to delete item: ${errorText}`);
+                }
+        
+                
+                setLocalItems(localItems.filter((_, i) => i !== index));
+            } catch (error) {
+                console.error("Error deleting item:", error);
+            }
+        };
     
         return (
-            <div className="section">
-                <div className="section-header">
-                    <h3>{title}</h3>
-                    <FaPencilAlt className="edit-icon" onClick={() => setIsModalOpen(true)} />
-                </div>
+            <>
+            
+                
+                {isAttackSection ? (
+                    <div className='attacks-box'>
+                        <div className="section-header">
+                            <h2>{title}</h2>
+                            <FaPencilAlt className="edit-icon" onClick={() => setIsModalOpen(true)} />
+                        </div>
+                        
+                            
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Nazwa</th>
+                                <th>Attack Bonus</th>
+                                <th>Obrażenia</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {localItems.map((item, index) => (
+                                <tr key={index}>
+                                <td>
+                                    {item.name}
+                                </td>
+                                <td>
+                                    {item.attack_bonus}
+                                </td>
+                                <td>
+                                    {item.damage}
+                                </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <div className="info-box">
+                        <div className="section-header">
+                            <h3>{title}</h3>
+                            <FaPencilAlt className="edit-icon" onClick={() => setIsModalOpen(true)} />
+                        </div>
+                        <>
+                        {localItems.length > 0 ? (
+                            <ul>
+                                {localItems.map((item, index) => (
+                                    <li key={index}>
+                                        <strong>{item.name}</strong> - {item.description}
+                                        {!isAttackSection && ` - ${item.description}`}
+                                        {isEquipmentField && ` (x${item.quantity})`}
+                                        {isAttackSection && ` (Bonus: +${item.attack_bonus}, Damage: ${item.damage})`}
+                                    </li>
+                                ))}
+                            </ul>
+                            ) : (
+                            <p>Brak danych</p>
+                        )}
+                        </>
+                        </div>
+                    )}
     
-                <ul>
-                    {localItems.map((item, index) => (
-                        <li key={index}>
-                            <strong>{item.name}</strong> - {item.description} (x{item.quantity})
-                        </li>
-                    ))}
-                </ul>
-    
-                {/* Modal */}
+                {/* Modal edycji */}
                 {isModalOpen && (
                     <div className="modal-overlay">
                         <div className="modal">
                             <h2>Edytuj {title}</h2>
+    
                             {localItems.map((item, index) => (
+                                
                                 <div key={index} className="edit-item">
                                     <input
                                         type="text"
@@ -171,23 +259,49 @@ const CharacterDetails = () => {
                                         value={item.name}
                                         onChange={(e) => handleEdit(index, "name", e.target.value)}
                                     />
+                                    {!isAttackSection && (
                                     <input
                                         type="text"
                                         placeholder="Opis"
                                         value={item.description}
                                         onChange={(e) => handleEdit(index, "description", e.target.value)}
                                     />
-                                    <input
-                                        type="number"
-                                        placeholder="Ilość"
-                                        value={item.quantity}
-                                        min="1"
-                                        onChange={(e) => handleEdit(index, "quantity", Number(e.target.value))}
-                                    />
-                                    <FaTrash className="delete-icon" onClick={() => handleDelete(index)} />
+                                    )}
+    
+                                    {isEquipmentField && (
+                                        <input
+                                            type="number"
+                                            placeholder="Ilość"
+                                            value={item.quantity}
+                                            min="1"
+                                            onChange={(e) => handleEdit(index, "quantity", Number(e.target.value))}
+                                        />
+                                    )}
+    
+                                    {isAttackSection && (
+                                        <>
+                                            <input
+                                                type="number"
+                                                placeholder="Attack Bonus"
+                                                value={item.attack_bonus}
+                                                onChange={(e) => handleEdit(index, "attack_bonus", Number(e.target.value))}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Damage (np. 1d8+2)"
+                                                value={item.damage}
+                                                onChange={(e) => handleEdit(index, "damage", e.target.value)}
+                                            />
+                                            
+                                        </>
+                                    )}
+                                    
+                                    <FaTrash className="delete-icon" onClick={() => handleDelete(item.id, index)} />
                                 </div>
                             ))}
+    
                             <button onClick={handleAdd}><FaPlus /> Dodaj</button>
+    
                             <div className="modal-buttons">
                                 <button onClick={() => setIsModalOpen(false)}>Anuluj</button>
                                 <button onClick={handleSave}>Zapisz</button>
@@ -195,7 +309,8 @@ const CharacterDetails = () => {
                         </div>
                     </div>
                 )}
-            </div>
+            
+            </>
         );
     };
 
@@ -418,7 +533,7 @@ const CharacterDetails = () => {
             </div>
 
             {/* Atrybuty + skille*/}
-            <div className='attributes_skills'>
+            <div className='attributes-skills'>
                 <div className="attributes">
                     {["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"].map((attr) => (
                         
@@ -470,94 +585,49 @@ const CharacterDetails = () => {
                             )}
                         
                     </div>
-                    <div className="attacks">
-                            <h2>Ataki</h2>
-                            <table>
-                            
-                            {character.attacks && character.attacks.length > 0 ? (
-                                <tbody>
-                                    <tr>
-                                            <th>Nazwa</th>
-                                            <th>Bonus</th>
-                                            <th>DMG</th>
-                                        </tr>
-                                    {character.attacks.map((attack, index) => (
-                                        <tr key={attack}>
-                                            <td>{attack.name}</td>
-                                            <td>+{attack.attack_bonus}</td>
-                                            <td>{attack.damage}</td>
-                                        </tr>
-                                    ))}
-                                
-                                </tbody>
-                            ) : (
-                                <p>Brak przedmiotów</p>
-                            )}
-                            </table>
-                        </div>
+                    <EditableSection
+                            title="Attacks"
+                            items={character.attacks}
+                            fieldName="attacks"
+                            onSave={handleSave}
+                        />
                 </div>  
 
                 <div className='traits-container'>
                 {/* Traits & features */}
-                    <h2>Cechy</h2>
-                    <div className="info-box">
-                            {character.traits && character.traits.length > 0 ? (
-                                <ul>
-                                    {character.traits.map((trait, index) => (
-                                        <li key={index}>
-                                            <strong>{trait.name}</strong> - {trait.description}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>Brak cech</p>
-                            )}
+                        {/* Traits */}
+                        <EditableSection
+                            title="Traits"
+                            items={character.traits}
+                            fieldName="traits"
+                            onSave={handleSave}
+                        />
 
-                            {character.features && character.features.length > 0 ? (
-                                <ul>
-                                    {character.features.map((feature, index) => (
-                                        <li key={index}>
-                                            <strong>{feature.name}</strong> - {feature.description}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>Brak features</p>
-                            )}
-                        </div>
-                        {/* Bieglosci */}
-                        <h2>Inne biegłości</h2>
-                        <div className="info-box">
-                            
-                            {character.proficiencies && character.proficiencies.length > 0 ? (
-                                <ul>
-                                    {character.proficiencies.map((proficiency, index) => (
-                                        <li key={index}>
-                                            <strong>{proficiency.name}</strong> - {proficiency.description}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>Brak biegłości</p>
-                            )}
-                        </div>
+                        {/* Features */}
+                        <EditableSection
+                            title="Features"
+                            items={character.features}
+                            fieldName="features"
+                            onSave={handleSave}
+                        />
+
+                        {/* Proficiencies */}
+                        <EditableSection
+                            title="Proficiencies"
+                            items={character.proficiencies}
+                            fieldName="proficiencies"
+                            onSave={handleSave}
+                        />
+
 
                         {/* Languages */}
-                        <h2>Języki</h2>
-                        <div className="info-box">
-                            
-                            {character.languages && character.languages.length > 0 ? (
-                                <ul>
-                                    {character.languages.map((language, index) => (
-                                        <li key={index}>
-                                            <strong>{language.name}</strong> - {language.description}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>Brak biegłości</p>
-                            )}
-                        </div>
+                        <EditableSection
+                            title="Languages"
+                            items={character.languages}
+                            fieldName="languages"
+                            onSave={handleSave}
+                        />
+                        
                         {/* Ekwipunek */}
                         <EditableSection
                             title="Equipment"

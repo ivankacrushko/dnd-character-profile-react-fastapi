@@ -19,7 +19,7 @@
     margin-bottom: 20px;
 }
 
-.attributes_skills {
+.attributes-skills {
     display: grid;
     
     grid-template-columns: 1fr 2fr 2fr;
@@ -109,21 +109,42 @@
     border-radius: 5px;
 }
 
-.attacks table {
-    width: 100%;
-    border-collapse: collapse;
+.info-box .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.attacks td {
-    border: 1px solid black;
-    padding: 5px;
+.edit-icon {
+    top: 0;
+    right: 0;
+    cursor: pointer;
 }
 
-.attacks {
+.attacks-box .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.attacks-box {
     text-align: left;
     width:100%;
     font-size: 1.5em;
     
+}
+
+.attacks-box table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.attacks-box table td {
+    border: 1px solid black;
+    padding: 5px;
+    word-wrap: break-word; /* Zawija tekst */
+    white-space: normal; /* Pozwala na łamanie linii */
 }
 
 .death-saves {
