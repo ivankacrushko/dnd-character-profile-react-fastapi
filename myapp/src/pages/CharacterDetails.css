@@ -1,0 +1,406 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
+
+.character-sheet {
+    font-family: 'Cormorant Garamond', serif;
+    max-width: 900px;
+    margin: auto;
+    background: #f5f1e7;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 8px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Nagłówek */
+.header {
+    font-size: 1.4rem;
+    text-align: center;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.hp-section-col {
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.attributes-skills {
+    display: grid;
+    
+    grid-template-columns: 1fr 2fr 2fr;
+    gap: 20px;
+}
+
+.traits-conteiner {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 1.5em;
+    width: 100%;
+}
+
+/* Atrybuty */
+/* Atrybuty po lewej */
+.attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width:100%;
+}
+
+.attribute {
+    text-align: center;
+    border: 2px solid black;
+    padding: 10px;
+    border-radius: 10px;
+    background: white;
+    width: auto;
+}
+
+.attribute h2 {
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.attribute p {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.attribute span {
+    font-size: 1.5em;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Skille po prawej */
+.skills {
+    text-align: left;
+    width:100%;
+    font-size: 1.5em;
+    
+}
+
+
+
+.skills table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.skills td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+/* HP */
+.hp-section {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+}
+
+/* Ekwipunek */
+.info-box {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 2px solid black;
+    background: white;
+    border-radius: 5px;
+}
+
+.info-box .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-icon {
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.attacks-box .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.attacks-box {
+    text-align: left;
+    width:100%;
+    font-size: 1.5em;
+    
+}
+
+.attacks-box table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.attacks-box table td {
+    border: 1px solid black;
+    padding: 5px;
+    word-wrap: break-word; /* Zawija tekst */
+    white-space: normal; /* Pozwala na łamanie linii */
+}
+
+.death-saves {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 2px solid black;
+    background: white;
+    border-radius: 5px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: auto;
+    max-width: 90%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.edit-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.edit-item input {
+    flex: 1;
+    padding: 5px;
+}
+
+.delete-icon {
+    color: red;
+    cursor: pointer;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.modal-buttons button {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-buttons button:first-child {
+    background: gray;
+    color: white;
+}
+
+.modal-buttons button:last-child {
+    background: green;
+    color: white;
+}
+
+/* Floating Button */
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 24px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.floating-button:hover {
+    background: #0056b3;
+}
+
+/* Panel Notatek */
+.notes-panel {
+    position: fixed;
+    top: 5vh;
+    right: -100%;
+    width: 30%;
+    height: 85vh;
+    background: white;
+    box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.3);
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 1001;
+}
+
+.notes-panel.open {
+    right: 0;
+}
+
+.notes-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-content h2 {
+    margin-bottom: 10px;
+}
+
+.notes-content textarea {
+    flex-grow: 1;
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+    resize: none;
+}
+
+.save-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.save-btn:hover {
+    background: #218838;
+}
+
+/* Przycisk zamknięcia */
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.dice-floating-button {
+    position: fixed;
+    bottom: 30px;
+    left: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 24px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dice-floating-button:hover {
+    background: #0056b3;
+}
+
+/* Panel Notatek */
+.dice-panel {
+    position: fixed;
+    top: 5vh;
+    left: -100%;
+    width: 30%;
+    height: 85vh;
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.3);
+    transition: left 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 1001;
+}
+
+.dice-panel.open {
+    left: 0;
+}
+
+.dice-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .character-sheet {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    .attributes_skills {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .traits-conteiner, .attributes, .skills {
+        font-size: 1.2em;
+    }
+
+    .attribute {
+        padding: 8px;
+        font-size: 1.2em;
+    }
+
+    .hp-section {
+        flex-direction: column;
+        text-align: center;
+        font-size: 1em;
+    }
+
+    .skills table, .attacks table {
+        font-size: 1em;
+    }
+
+    .modal {
+        width: 90%;
+    }
+
+    .notes-panel {
+        top: 0;
+        right: -200%;
+        height: 95vh;
+        width: calc(100vw - 30px);
+    }
+
+    .dice-panel {
+        top: 0;
+        left: -200%;
+        height: 95vh;
+        width: calc(100vw - 30px);
+    }
+}

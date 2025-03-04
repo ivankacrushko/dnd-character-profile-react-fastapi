@@ -25,6 +25,14 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+myapp/node_modules/
+docker-compose.yaml
+.vscode
+backend/Dockerfile
+backend/select-query
+myapp/Dockerfile
+
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

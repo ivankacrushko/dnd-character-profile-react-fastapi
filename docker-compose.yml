@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=sqlite:///./database.db
+    depends_on:
+      - db
+
+  frontend:
+    build: ./myapp
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./myapp:/app
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: dnd-character-view
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

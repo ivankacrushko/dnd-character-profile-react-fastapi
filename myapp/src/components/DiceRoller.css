@@ -1,0 +1,57 @@
+
+
+.dice-panel .close-btn {
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  position: absolute;
+  color:white;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.dice-select {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.dice-content h2 {
+  color: white;
+  text-align: center;
+}
+
+
+.dice-button {
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  background: gray;
+  color: white;
+  cursor: pointer;
+}
+
+.dice-button.active {
+  background: orange;
+}
+
+.dice-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+
+.roll-btn {
+  background: orange;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.roll-btn:hover {
+  background: rgb(190, 124, 0);
+}
+
