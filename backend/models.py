@@ -50,6 +50,7 @@ class Character(Base):
     death_saves_failure = Column(Integer)
 
     backstory = Column(Text)
+    notes = Column(Text)
 
     skills = relationship('Skill', back_populates='character', cascade='all, delete-orphan')
     attacks = relationship('Attack', back_populates='character', cascade='all, delete-orphan')

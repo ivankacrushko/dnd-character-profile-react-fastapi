@@ -135,7 +135,10 @@ class CharacterResponse(BaseModel):
     hit_dice: str
     death_saves_success: int
     death_saves_failure: int
+
     backstory: str
+    notes: Optional[str] = None
+    
     alignment: str
     experience: int
     strength: int
@@ -169,6 +172,8 @@ class CharacterUpdate(BaseModel):
     armor: Optional[int] = None
     death_saves_success: Optional[int] = None
     death_saves_failure: Optional[int] = None
+
+    notes: Optional[str] = None
 
     strength: Optional[int] = None
     dexterity: Optional[int] = None

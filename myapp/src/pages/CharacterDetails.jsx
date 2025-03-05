@@ -203,6 +203,7 @@ const CharacterDetails = () => {
 
     const saveNotes = (newNotes) => {
         setIsNotesOpen(newNotes);
+        handleSave('notes', newNotes)
     }
 
 
@@ -219,7 +220,7 @@ const CharacterDetails = () => {
                 isOpen={isNotesOpen} 
                 onClose={() => setIsNotesOpen(false)} 
                 onSave={saveNotes} 
-                initialNotes={notes}
+                initialNotes={character.notes}
             />
             <DiceRoller 
                 isOpen={isDiceRollerOpen} 
@@ -394,9 +395,7 @@ const CharacterDetails = () => {
                                 </tbody>
                                 </table>
                             ) : (
-                                <tr>
-                                    <td colSpan="2">Brak danych o skillach</td>
-                                </tr>
+                                    <p>Brak danych o skillach</p>
                             )}
                         
                     </div>
@@ -434,9 +433,6 @@ const CharacterDetails = () => {
                         onSave={handleSave}
                         characterId={character.id}
                     />
-                    <>
-                    { console.log('Postac:',character) }
-                    </>
                     
                     <EditableSection
                         title="Proficiencies"
